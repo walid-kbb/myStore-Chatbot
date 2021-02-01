@@ -98,11 +98,32 @@ function handleMessage(sender_psid, received_message) {
     if (received_message.text) {    
         if (received_message.text==="Comment vas-tu ?"){
             response = {
-                "text": `Je vais bien,merci`
-              }
+                "attachment": {
+                  "type": "template",
+                  "payload": {
+                    "template_type": "generic",
+                    "elements": [{
+                      "title": "Trés bien et vous ?",
+                      "subtitle": "appuyez sur le bouton",
+                      "buttons": [
+                        {
+                          "type": "postback",
+                          "title": "Je vais bien,merci",
+                          "payload": "Je vais bien,merci",
+                        },
+                        {
+                          "type": "postback",
+                          "title": "Non, ça ne va pas",
+                          "payload": "Non, ça ne va pas",
+                        }
+                      ],
+                    }]
+                }
+                }
+             }
         }else{
             response = {
-                "text": `"${received_message.text}"`
+                "text": `${received_message.text}`
               }
         }
       // Create the payload for a basic text message
