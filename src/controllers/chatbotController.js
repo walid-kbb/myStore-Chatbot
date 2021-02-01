@@ -9,10 +9,10 @@ let test= (req,res)=>{
 }
 
 let getWebHook=(req,res)=>{
-// Your verify token. Should be a random string.
+// Mon token de verification.
     let VERIFY_TOKEN = MY_VERIFY_TOKEN;
 
-    // Parse the query params
+    // Les paramètres de la requête
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
     let challenge = req.query['hub.challenge'];
