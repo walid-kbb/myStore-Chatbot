@@ -5,7 +5,7 @@ const MY_VERIFY_TOKEN = process.env.MY_VERIFY_TOKEN;
 console.log(MY_VERIFY_TOKEN);
 let test= (req,res)=>{
 
-    return res.send("Hello again");
+    return res.send("myStore chatBot by Walid KEBBAB");
 }
 
 let getWebHook=(req,res)=>{
@@ -17,18 +17,17 @@ let getWebHook=(req,res)=>{
     let token = req.query['hub.verify_token'];
     let challenge = req.query['hub.challenge'];
 
-    // Checks if a token and mode is in the query string of the request
+    // Vérifie si un token et un mode se trouvent dans la chaîne de requête de la demande
     if (mode && token) {
 
-        // Checks the mode and token sent is correct
+        // Vérifie que le mode et le token envoyés sont corrects
         if (mode === 'subscribe' && token === VERIFY_TOKEN) {
 
-            // Responds with the challenge token from the request
             console.log('WEBHOOK_VERIFIED');
             res.status(200).send(challenge);
 
         } else {
-            // Responds with '403 Forbidden' if verify tokens do not match
+            // Répond avec «403» si les tokens de vérification ne correspondent pas
             res.sendStatus(403);
         }
     }
@@ -38,23 +37,23 @@ let getWebHook=(req,res)=>{
 let postWebHook=(req,res)=>{
     let body = req.body;
 
-    // Checks this is an event from a page subscription
+    // Vérifie qu'il s'agit d'un événement issu d'un abonnement à une page
     if (body.object === 'page') {
   
-      // Iterates over each entry - there may be multiple if batched
+      // Itère sur chaque entrée - il peut y avoir plusieurs lots
       body.entry.forEach(function(entry) {
   
-          // Gets the body of the webhook event
+          // Obtient le corps de l'événement webhook
   let webhook_event = entry.messaging[0];
   console.log(webhook_event);
 
 
-          // Get the sender PSID
+          // Obtenez le PSID de l'expéditeur
           let sender_psid = webhook_event.sender.id;
           console.log('Sender PSID: ' + sender_psid);
 
-          // Check if the event is a message or postback and
-          // pass the event to the appropriate handler function
+          // Vérifiez si l'événement est un message ou une publication et
+          // transmettre l'événement à la fonction de gestionnaire appropriée
           if (webhook_event.message) {
               handleMessage(sender_psid, webhook_event.message);
           } else if (webhook_event.postback) {
@@ -63,38 +62,38 @@ let postWebHook=(req,res)=>{
   
       });
   
-      // Returns a '200 OK' response to all requests
+      // Renvoie une réponse «200 OK» à toutes les demandes
       res.status(200).send('EVENT_RECEIVED');
     } else {
-      // Returns a '404 Not Found' if event is not from a page subscription
+      // Renvoie un '404 Not Found' si l'événement ne provient pas d'un abonnement à une page
       res.sendStatus(404);
     }
 
 }
 
-// Handles post back events
+// Gère les événements post-back
 function handlePostback(sender_psid, received_postback) {
     let response;
     
-    // Get the payload for the postback
+    
     let payload = received_postback.payload;
   
-    // Set the response based on the postback payload
+    // Définir la réponse en fonction de la charge utile de publication
     if (payload === 'yes') {
       response = { "text": "Thanks!" }
     } else if (payload === 'no') {
       response = { "text": "Oops, try sending another image." }
     }
-    // Send the message to acknowledge the postback
+    // Envoyez le message pour accuser réception de la publication
     callSendAPI(sender_psid, response);
   }
 
-// Handles messages events
+// Gère les événements de messages
 function handleMessage(sender_psid, received_message) {
 
     let response;
   
-    // Check if the message contains text
+    // Vérifiez si le message contient du texte
     if (received_message.text) {    
         if (received_message.text==="Comment vas-tu ?"){
             response = {
@@ -126,24 +125,24 @@ function handleMessage(sender_psid, received_message) {
                 "text": `${received_message.text}`
               }
         }
-      // Create the payload for a basic text message
+      // Créer la charge utile pour un message texte de base
      
     } else if (received_message.attachments) {
   
-        // Gets the URL of the message attachment
+        // Obtient l'URL de la pièce jointe au message
         let attachment_url = received_message.attachments[0].payload.url;
         response = {
             "text": `Je ne sais pas traiter ce type de demande`
           }
       } 
     
-    // Sends the response message
+    // Envoie le message de réponse
     callSendAPI(sender_psid, response);    
   }
 
-// Sends response messages via the Send API
+// Envoie des messages de réponse via l'API d'envoi
 function callSendAPI(sender_psid, response) {
-    // Construct the message body
+    // Construire le corps du message
     let request_body = {
       "recipient": {
         "id": sender_psid
@@ -151,7 +150,7 @@ function callSendAPI(sender_psid, response) {
       "message": response
     }
   
-    // Send the HTTP request to the Messenger Platform
+    // Envoyez la requête HTTP à la plateforme Messenger
     request({
       "uri": "https://graph.facebook.com/v9.0/me/messages",
       "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN },
